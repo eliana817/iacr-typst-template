@@ -1,0 +1,9 @@
+[package]
+name = "typst"
+version = "0.1.0"
+entrypoint = "template.typ"
+description = "IACR Communications in Cryptology template file."
+
+[template]
+path = "init_material"
+entrypoint = "main.typ"
