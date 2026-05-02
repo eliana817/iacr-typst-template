@@ -2,68 +2,270 @@
 // https://github.com/IACR/latex/blob/main/iacrj/iacrj.cls
 // 
 // The CC license badge was taken from here:
-// https://github.com/creativecommons/cc-assets/blob/main/license_badges
-// 
-// The crossmark image for CiC documents is from: 
-// https://crossmark.crossref.org/widget/v2.0/readme.html
-// 
-// ORCID logo is from:
-// https://orcid.filecamp.com/s/o/n8FpP1ADWmZDCUP2
+// https://github.com/creativecommons/cc-assets/blob/main/license_badges/small/by.svg
 
-#let iacr-front-page(
+#let iacr-template(
+
   title: "",
   subtitle: none,
   authors: (),
+  // e.g.: (
+  //   (name: "Alice Smith", inst: (1,), orcid: "0000-0000-0000-0000", email: "alice@example.com"),
+  //   (name: "Bob Jones",   inst: (1,2), email: "bob@example.com"),
+  // )
   affiliations: (),
-  abstract: [],
+  // e.g.: (
+  //   (id: 1, name: "NXP Semiconductors", city: "Leuven", country: "Belgium"),
+  //   (id: 2, name: "Self", city: "San Jose", country: "USA"),
+  // )
   keywords: (),
-  anonymous: false,
-  anonymous_placeholder: "",
-  cite-color: blue,
+  abstract: [],
+
+  running_title: "",
+  running_authors: "",
+  version: "preprint", // preprint, submission or final
+  journal: "tosc", // cic, tosc, tches
+  vol: none,
+  no: none,
+  fp: 1,
+  doi: none,
+  received: none, 
+  revised: none,
+  accepted: none,
+  published: none,
+  body
 ) = {
+
+  // Set variables based on journal 
+  
+  let (pub_name, eissn) = if journal == "cic" {
+      ("IACR Communications in Cryptology", "3006-5496")
+    } else if journal == "tosc" {
+      ("IACR Transactions on Symmetric Cryptology", "2519-173X")
+    } else if journal == "tches" {
+      ("IACR Transactions on Cryptographic Hardware and Embedded Systems", "2569-2925")
+    } else {
+      ("", "")
+    }
+
+  // Set variables based on version 
+  
+  let anonymous = version == "submission"
+  let anonymous_placeholder = "Anonymous Submission to " + pub_name
+  let is_final  = version == "final"
+  let actual_running_authors = if anonymous {
+    ""
+  } else if running_authors != "" {
+    running_authors
+  } else {
+    authors.map(a => a.name).join(", ")
+  }
+
+  // General formatting
+
+  set page(
+    paper: "a4",
+    margin: (
+      top: 12.5%,
+      right: 17.5%,
+      bottom: 12.5%,
+      left: 17.5%
+    )
+  )
+
+  set text(font: "New Computer Modern", fill: black, size: 10pt)
+  set par(
+    justify: true,
+    first-line-indent: (amount: 1em, all: false),
+    spacing: .65em
+  )
+
+  // Heading style
+  
+  set heading(
+    numbering: "1.1",
+  )
+
+  show heading: it => {
+    set text(
+      weight: "bold",
+      size: 10pt,
+    )
+    it
+    v(.5em)
+  }
+
+  show heading.where(level: 1): set text(size: 12pt)
+
+  // Links
+
+  // --- Should we overwrite the default colors of typst to match the latex colors?? Cause they are slightly different.
+  let latex-red = rgb("#ED1B23")
+  let latex-black = rgb("#221E1F")
+  let latex-blue = rgb("#2D2F92")
+  let latex-green = rgb("#00A64F")
+
+  let cite-color = color.mix((latex-black, 70%), (latex-green, 30%))
+  let link-color = color.mix((latex-black, 70%), (latex-red,  30%))
+  let url-color = if journal == "cic" { latex-blue } else { link-color }
+
+  show ref: set text(fill: link-color)
+  show cite: set text(fill: cite-color)
+  show link: it => {
+    // For external links use url-color, for internal links use link-color
+    if type(it.dest) == str {
+      text(fill: url-color, it)
+    } else {
+      text(fill: link-color, it)
+    }
+  }
+
+  // Figures
+
+  show figure: set block(breakable: true)
+  show figure.caption: it => [
+    #set align(left)
+    #text(weight: "bold")[#it.supplement  #context it.counter.display(it.numbering): ] #it.body
+  ]
+  // For tables, caption is at the top
+  show figure.where(kind: table): it => {
+    it.caption
+    it.body
+  }
+
+  // Header and footer (all main pages)
+  set page(
+
+    header: context {
+      set text(size: 9pt)
+      if here().page() == 1 {
+        if is_final { // Header on first page for final version only
+          let lp = counter(page).final().first() + fp - 1
+          if journal == "cic" {
+            // CiC: name + EISSN + vol/no/pages on left, DOI on right
+            grid(
+              columns: (1fr, auto),
+              stack(
+                spacing: 2pt,
+                [#pub_name],
+                [ISSN #eissn, Vol. ]
+                + if vol != none { [#vol] }
+                + if no  != none { [, No. #no] }
+                + [, #lp pages.]
+              ),
+              if doi != none {
+                align(right)[
+                  #link("https://doi.org/" + doi)[https://doi.org/#doi]
+                ]
+              }
+            )
+          } else {
+            // ToSC and TCHES: name + EISSN + vol/no/pages + DOI all on left
+            stack(
+              spacing: 5pt,
+              [#pub_name],
+              [ISSN #eissn]
+              + if vol != none { [, Vol. #vol] }
+              + if no  != none { [, No. #no]  }
+              + [, pp. #fp\--#lp.]
+              + [ #h(1fr) ]
+              + if doi != none {
+                  link("https://doi.org/" + doi, [DOI: #doi])
+                },
+            )
+          }
+        }
+        // No header on first page for preprint/submission versions
+      } else {
+        // Running authors appear on odd pages, left-aligned
+        if calc.odd(here().page()) {
+          grid(
+            columns: (1fr, auto),
+            // Anonymous submission instead of running authors if submission version
+            if anonymous { [#anonymous_placeholder] }
+            else { [#actual_running_authors] },
+            counter(page).display(),
+          )
+        } else {
+          // Running title appears on even pages, right-aligned
+          grid(
+            columns: (auto, 1fr),
+            counter(page).display(),
+            align(right)[#running_title],
+          )
+        }
+      }
+    },
+
+    footer: context {
+      // For the first page only: license + date
+      if here().page() == 1 {
+        set text(size: 8pt)
+        if is_final {
+        // Footer for final version
+        grid(
+          columns: (1fr, auto),
+          [Licensed under #highlight[CC-BY 4.0]],
+          image("Resources/by.svg", width: 4em), 
+        )
+        v(-0.5em)
+        // Dates row — only shown if value is not none
+        grid(
+          columns: (1fr, 1fr, 1fr, 1fr),
+          if received  != none [ Received: #received ],
+          if revised   != none [ Revised: #revised ],
+          if accepted  != none [ Accepted: #accepted ],
+          if published != none [ Published: #published ],
+        )
+      } else {
+        // Footer for preprint version
+        grid(
+          columns: (1fr, auto),
+          [Licensed under #highlight[CC-BY 4.0]],
+          [Date of this document: #datetime.today().display()],
+        )
+      }
+      }
+    }
+  )
+
+  // Start page numbering at fp
+  counter(page).update(fp)
+
+  // PDF metadata
+  set document(
+    title: running_title,
+    // Authors are hidden if for submission
+    author: if anonymous { "hidden for submission" } else { actual_running_authors },
+    description: pub_name + if doi != none { ", DOI: " + doi } else { "" },
+  )
+
+  // Front page content formatting. Document metadata.
+
+  // Title + Authors + Affiliations
   align(center)[
-    #v(2em)
-    #text(font: ("Latin Modern Sans", "Arial"), size: 17.28pt, weight: 700)[#title]
+    #v(1em)
+    #text(size: 17.28pt, weight: "bold")[#title]
     #if subtitle != none {
       v(0.3em)
       text(size: 12pt, style: "italic")[#subtitle]
     }
-    #v(-8pt)
+    #v(1em)
 
     // Hide authors and affiliations if submission version (anonymous)
     
     #if not anonymous {
       let show-inst = authors.len() > 1 and affiliations.len() > 1
-      
       text(size: 10pt)[
-        #authors.map(a => {
-          let out = [#a.name]
-
-          // Footnote mark first (a, b, c...)
-          let has-fn = "footnote" in a and a.footnote != none and a.footnote != ""
-          if has-fn {
-            out += footnote(a.footnote)
-          }
-
-          // Institution superscript, with a leading comma after a footnote mark (as in LaTeX)
+        #authors.map(a =>
           if show-inst and "inst" in a and a.inst.len() > 0 {
-            let insts = a.inst.map(str).join(",")
-            out += super(if has-fn { "," + insts } else { insts })
+            [#a.name#super(a.inst.map(str).join(","))]
+          } else {
+            [#a.name]
           }
-
-          // ORCID icon
-          if "orcid" in a and a.orcid != none {
-            out += link("https://orcid.org/" + a.orcid)[
-              #box(image("Resources/orcid.svg", width: 0.7em))
-              #h(-2.5pt)
-            ]
-          }
-
-          out
-        }).join(", ", last: " and ")
+        ).join(", ")
       ]
-
-      v(10pt)
+      v(0.5em)
       text(size: 9pt)[
         
         #affiliations.map(a => {
@@ -73,15 +275,14 @@
           )
           
           let affil-emails = affil-authors.map(au => au.email)
-          let has_city = "city" in a and a.city != none and a.city != ""
 
           stack(
-            //spacing: 5pt,
+            spacing: 5pt,
             // Affiliation line
             if show-inst {
-              [#super(str(a.id))#a.name,#if has_city [#a.city, ] #a.country]
+              [#super(str(a.id))#a.name, #a.city, #a.country]
             } else {
-              [#a.name, #if has_city [#a.city,] #a.country]
+              [#a.name, #a.city, #a.country]
             },
             // Add mailto links when applicable
             if affil-emails.len() > 0 {
@@ -125,7 +326,7 @@
     }
   ]
 
-  v(30pt)
+  v(2em)
 
   // Abstract + keywords
   align(center)[
@@ -133,11 +334,12 @@
 
       #set text(size: 9pt)
       #set align(left)
-      #set par(hanging-indent: 0em, first-line-indent: 0em, spacing: 1em)
 
       // Abstract
-      #text(weight: "bold")[Abstract. #h(4pt)] 
+      #text(weight: "bold")[Abstract.] 
       #abstract
+
+      #v(.5em)
 
       // Keywords
       #block[
@@ -148,302 +350,8 @@
       ]
     ]
   ]
-}
-
-#let iacr-template(
-
-  journal: "tosc", // cic, tosc, tches
-  version: "preprint", // preprint, submission or final
-  title: "",
-  subtitle: none,
-
-  authors: (),
-  // e.g.: (
-  //   (name: "Author A", inst: (1,), email: "author_a@example.com"),
-  //   (name: "Author B",   inst: (1,2), email: "author_b@example.com"),
-  // )
-  
-  affiliations: (),
-  // e.g.: (
-  //   (id: 1, name: "Affiliation A", city: "City A", country: "Country A"),
-  //   (id: 2, name: "Affiliation B", city: "City B", country: "Country B"),
-  // )
-  
-  abstract: [],
-  keywords: (),
-
-  running_title: none,
-  running_authors: none,
-
-  vol: none,
-  no: none,
-  doi: none,
-  crossmark_url: none,
-  received: none, 
-  revised: none,
-  accepted: none,
-  published: none,
-
-  body
-) = {
-  
-  let license_value = link("http://creativecommons.org/licenses/by/4.0/")[CC BY 4.0]
-
-  // Set variables based on journal 
-  
-  let (pub_name, eissn) = if journal == "cic" {
-      ("IACR Communications in Cryptology", "3006-5496")
-    } else if journal == "tosc" {
-      ("IACR Transactions on Symmetric Cryptology", "2519-173X")
-    } else if journal == "tches" {
-      ("IACR Transactions on Cryptographic Hardware and Embedded Systems", "2569-2925")
-    } else {
-      ("", "")
-    }
-
-  // Set variables based on version 
-  
-  let anonymous = version == "submission"
-  let anonymous_placeholder = "Anonymous Submission to " + pub_name
-  let is_final  = version == "final"
-  let actual_running_authors = if anonymous {
-    ""
-  } else if running_authors != none {
-    running_authors
-  } else {
-    authors.map(a => a.name).join(", ")
-  }
-  let actual_running_title = if running_title != none { 
-    running_title 
-  } else { 
-    title 
-  }
-
-  // General definitions
-  let has(v) = v != none and v != ""
-
-  // General formatting
-
-  set page(
-    paper: "a4",
-    margin: (
-      top: 13.5%,
-      right: 17.5%,
-      bottom: 12.5%,
-      left: 17.5%
-    )
-  )
-
-  set footnote(numbering: "a")
-
-  set text(font: "New Computer Modern", fill: black, size: 10pt)
-  set par(
-    justify: true,
-    first-line-indent: (amount: 1em, all: false),
-    spacing: .65em
-  )
-
-  // Bibliography 
-  
-  set bibliography(
-    style: "Resources/bib_style/din-1505-2-alphanumeric.csl"
-  )
-
-  // Heading style
-  
-  set heading(
-    numbering: "1.1",
-  )
-
-  show heading: set text(
-    weight: "bold",
-    font: if journal in ("tosc", "tches") { ("Latin Modern Sans", "Arial") } else { "New Computer Modern" },
-  )
-
-  show heading.where(level: 1): set text(size: 14.4pt)
-  show heading.where(level: 2): set text(size: 12pt)
-  
-  show heading: it => {
-    it
-    v(.5em)
-  }
-
-  // Links
-
-  // --- Should we overwrite the default colors of typst to match the latex colors?? Cause they are slightly different.
-  let green = rgb("#004B00") 
-  let red = rgb("#ED1B23")
-  let black = rgb("#221E1F")
-  let blue = rgb("#0101FF")
-
-  let magenta = rgb("#FB3199")
-  let url-color = if journal == "cic" { blue } else { magenta }
-  let cite-color = if journal == "tches" { magenta } else { green } 
-  let link-color = color.mix((black, 70%), (red,  30%), space: rgb)
-  let url-color = if journal == "cic" { blue } else { magenta }
-
-  show ref: set text(fill: link-color)
-  show cite: set text(fill: cite-color)
-  show link: it => {
-    if type(it.dest) == str {
-      text(fill: url-color, it)
-    } else {
-      text(fill: link-color, it)
-    }
-  }
-
-  // Figures
-
-  show figure: set block(breakable: true)
-  show figure.caption: it => [
-    #set align(left)
-    #text(weight: "bold")[#it.supplement  #context it.counter.display(it.numbering): ] #it.body
-  ]
-  // For tables, caption is at the top
-  show figure.where(kind: table): it => {
-    it.caption
-    it.body
-  }
-
-  // Header and footer (all main pages)
-  set page(
-
-    header: context {
-      set text(size: 9pt)
-      if here().page() == 1 {
-        if is_final { // Header on first page for final version only
-          let lp = counter(page).final().first()
-          if journal == "cic" {
-            // CiC: name + EISSN + vol/no/pages on left, DOI on right
-            grid(
-              columns: (1fr, auto),
-              align: (top + left, bottom + right),
-              stack(
-                spacing: 5pt,
-                [#pub_name],
-                [ISSN #eissn, Vol. ]
-                + if vol != none { [#vol] }
-                + if no  != none { [, No. #no] }
-                + [, #lp pages.]
-              ),
-              if doi != none {
-                stack(
-                  spacing: 2pt,
-                  link("https://doi.org/" + doi)[https://doi.org\/#doi],
-                  if crossmark_url != none {
-                    v(2pt)
-                    link(crossmark_url)[
-                      #image("Resources/crossmark.svg", height: 18.5%)
-                    ]
-                  }
-                )
-              }
-            )
-          } else {
-            // ToSC and TCHES: name + EISSN + vol/no/pages + DOI all on left
-            stack(
-              spacing: 5pt,
-              [#pub_name],
-              [ISSN #eissn]
-              + if vol != none { [, Vol. #vol] }
-              + if no  != none { [, No. #no]  }
-              + [, pp. 1\--#lp.]
-              + [ #h(1fr) ]
-              + if doi != none {
-                  link("https://doi.org/" + doi, [DOI: #doi])
-                },
-            )
-          }
-        }
-        // No header on first page for preprint/submission versions
-      } else {
-        // Running authors appear on odd pages, left-aligned
-        if calc.odd(here().page()) {
-          grid(
-            columns: (1fr, auto),
-            // Anonymous submission instead of running authors if submission version
-            if anonymous { [#anonymous_placeholder] }
-            else { [#actual_running_authors] },
-            counter(page).display(),
-          )
-        } else {
-          // Running title appears on even pages, right-aligned
-          grid(
-            columns: (auto, 1fr),
-            counter(page).display(),
-            align(right)[#actual_running_title],
-          )
-        }
-        v(-.2em)
-        line(length: 100%, stroke: .5pt)
-      }
-    },
-
-    footer: context {
-      // For the first page only: license + date
-      if here().page() == 1 {
-        set text(size: 8pt)
-        if is_final {
-        // Footer for final version
-        grid(
-          columns: (1fr, auto),
-          [This work is licensed under a "#license_value" license.],
-          link("https://creativecommons.org/licenses/by/4.0/deed.en")[
-            #image(if journal == "cic" {"Resources/by_big.svg"} else {"Resources/by_small.svg"}, width: 4em)
-          ], 
-        )
-
-        // Dates row — only shown if value is not none
-        let dates = (
-          if has(received) [Received: #received],
-          if has(revised) [Revised: #revised],
-          if has(accepted) [Accepted: #accepted],
-          if has(published) and journal != "cic" [Final version: #published],
-        ).filter(d => d != none)
-
-        if dates.len() > 0 {
-          grid(
-            columns: (1fr,) * dates.len(),
-            align: left,
-            ..dates,
-          )
-        }
-      } else {
-        // Footer for preprint version
-        grid(
-          columns: (1fr, auto),
-          [This work is licensed under a "#license_value" license.],
-          [Date of this document: #datetime.today().display()],
-        )
-      }
-      }
-    }
-  )
-
-  // PDF metadata
-  set document(
-    title: actual_running_title,
-    // Authors are hidden if for submission
-    author: if anonymous { "hidden for submission" } else { actual_running_authors },
-    description: pub_name + if doi != none { ", DOI: " + doi } else { "" },
-  )
-
-  // Front page content formatting. 
-
-  iacr-front-page(
-    title: title,
-    subtitle: subtitle,
-    authors: authors,
-    affiliations: affiliations,
-    abstract: abstract,
-    keywords: keywords,
-    anonymous: anonymous,
-    anonymous_placeholder: anonymous_placeholder,
-    cite-color: cite-color,
-  )
 
   v(2em)
 
   body
-
 }
