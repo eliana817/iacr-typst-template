@@ -194,6 +194,8 @@
             align(right)[#running_title],
           )
         }
+        v(-.2em)
+        line(length: 100%, stroke: .5pt)
       }
     },
 
