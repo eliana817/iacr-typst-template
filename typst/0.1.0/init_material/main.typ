@@ -1,6 +1,6 @@
-//////////////////////////////////////////////
-//          IACR template (v.0.1.0)         //
-//////////////////////////////////////////////
+/////////////////////////////////////////////////////
+//           IACR template (v.0.1.0)               //
+///////////////////////////////////////////////////// 
 
 #import "Define/define.typ": *
 #import "@iacr/typst:0.1.0": iacr-template
@@ -25,7 +25,6 @@
   vol: vol,
   no: no,
   doi: doi,
-  crossmark_url: crossmark_url,
   received: received, 
   revised: revised,
   accepted: accepted,

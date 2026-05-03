@@ -38,12 +38,10 @@ authors: A list of authors. Each author is a dictionary with the following field
   - inst  (required) : Tuple of affiliation IDs (must match ids in affiliations).
     --> Use (1,) for a single affiliation (trailing comma required).
   - email (optional) : Email address. Will appear as a mailto link under the corresponding affiliation on the front page.
-  - orcid (optional) : ORCID identifier. Will display an ORCID icon linking to the author's ORCID profile.
-  - footnote (optional) : Footnote text for the author. 
 */
 #let authors = (
-  (name: "Author A", inst: (1,), email: "author_a@example.com", orcid: "xxxx-xxxx-xxxx-xxxx", footnote: "This is a footnote for Author A."),
-  (name: "Author B", inst: (1, 2), email: "author_b@example.com", orcid: "xxxx-xxxx-xxxx-xxxx", footnote: "This is a footnote for Author B."),
+  (name: "Author A", inst: (1,), email: "author_a@example.com"),
+  (name: "Author B", inst: (1, 2), email: "author_b@example.com"),
 )
 
 //////////////////
@@ -54,7 +52,7 @@ authors: A list of authors. Each author is a dictionary with the following field
 affiliations: A list of affiliations. Each affiliation is a dictionary with:
   - id      (required) : Numeric identifier. Must match the inst values used in the authors list above.
   - name    (required) : Full name of the institution.
-  - city    (optional) : City of the institution.
+  - city    (required) : City of the institution.
   - country (required) : Country of the institution.
 */
 #let affiliations = (
@@ -113,17 +111,11 @@ Set to none if not yet assigned by the journal.
 #let no = "issue number"
 
 /*
-  doi: Digital Object Identifier assigned by the journal.
+doi: Digital Object Identifier assigned by the journal.
   Do not include the "https://doi.org/" prefix, just the identifier.
   e.g. "10.46586/tosc.v2024.i1.1-23"
 */
-#let doi = none
-
-/* 
-  crossmark_url: URL to the CrossMark page for the paper.
-  Set to none if not yet assigned by the journal. Only for CiC.
-*/
-#let crossmark_url = none
+#let doi = "doi"
 
 // received: Date the paper was received by the journal.
 #let received = "received date"

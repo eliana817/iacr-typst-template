@@ -6,35 +6,41 @@
 
 #let iacr-template(
 
+  journal: "tosc", // cic, tosc, tches
+  version: "preprint", // preprint, submission or final
   title: "",
   subtitle: none,
+
   authors: (),
   // e.g.: (
   //   (name: "Alice Smith", inst: (1,), orcid: "0000-0000-0000-0000", email: "alice@example.com"),
   //   (name: "Bob Jones",   inst: (1,2), email: "bob@example.com"),
   // )
+  
   affiliations: (),
   // e.g.: (
   //   (id: 1, name: "NXP Semiconductors", city: "Leuven", country: "Belgium"),
   //   (id: 2, name: "Self", city: "San Jose", country: "USA"),
   // )
-  keywords: (),
+  
   abstract: [],
+  keywords: (),
 
-  running_title: "",
-  running_authors: "",
-  version: "preprint", // preprint, submission or final
-  journal: "tosc", // cic, tosc, tches
+  running_title: none,
+  running_authors: none,
+
   vol: none,
   no: none,
-  fp: 1,
   doi: none,
   received: none, 
   revised: none,
   accepted: none,
   published: none,
+
   body
 ) = {
+
+  let license_value = link("http://creativecommons.org/licenses/by/4.0/")[Creative Commons License CC-BY 4.0]
 
   // Set variables based on journal 
   
@@ -55,10 +61,15 @@
   let is_final  = version == "final"
   let actual_running_authors = if anonymous {
     ""
-  } else if running_authors != "" {
+  } else if running_authors != none {
     running_authors
   } else {
     authors.map(a => a.name).join(", ")
+  }
+  let actual_running_title = if running_title != none { 
+    running_title 
+  } else { 
+    title 
   }
 
   // General formatting
@@ -78,6 +89,12 @@
     justify: true,
     first-line-indent: (amount: 1em, all: false),
     spacing: .65em
+  )
+
+  // Bibliography 
+  
+  set bibliography(
+    style: "Resources/bib_style/din-1505-2-alphanumeric.csl"
   )
 
   // Heading style
@@ -140,7 +157,7 @@
       set text(size: 9pt)
       if here().page() == 1 {
         if is_final { // Header on first page for final version only
-          let lp = counter(page).final().first() + fp - 1
+          let lp = counter(page).final().first()
           if journal == "cic" {
             // CiC: name + EISSN + vol/no/pages on left, DOI on right
             grid(
@@ -167,7 +184,7 @@
               [ISSN #eissn]
               + if vol != none { [, Vol. #vol] }
               + if no  != none { [, No. #no]  }
-              + [, pp. #fp\--#lp.]
+              + [, pp. 1\--#lp.]
               + [ #h(1fr) ]
               + if doi != none {
                   link("https://doi.org/" + doi, [DOI: #doi])
@@ -191,7 +208,7 @@
           grid(
             columns: (auto, 1fr),
             counter(page).display(),
-            align(right)[#running_title],
+            align(right)[#actual_running_title],
           )
         }
         v(-.2em)
@@ -207,10 +224,10 @@
         // Footer for final version
         grid(
           columns: (1fr, auto),
-          [Licensed under #highlight[CC-BY 4.0]],
+          [Licensed under #license_value],
           image("Resources/by.svg", width: 4em), 
         )
-        v(-0.5em)
+
         // Dates row — only shown if value is not none
         grid(
           columns: (1fr, 1fr, 1fr, 1fr),
@@ -223,7 +240,7 @@
         // Footer for preprint version
         grid(
           columns: (1fr, auto),
-          [Licensed under #highlight[CC-BY 4.0]],
+          [Licensed under #license_value],
           [Date of this document: #datetime.today().display()],
         )
       }
@@ -231,12 +248,9 @@
     }
   )
 
-  // Start page numbering at fp
-  counter(page).update(fp)
-
   // PDF metadata
   set document(
-    title: running_title,
+    title: actual_running_title,
     // Authors are hidden if for submission
     author: if anonymous { "hidden for submission" } else { actual_running_authors },
     description: pub_name + if doi != none { ", DOI: " + doi } else { "" },
@@ -356,4 +370,5 @@
   v(2em)
 
   body
+
 }
