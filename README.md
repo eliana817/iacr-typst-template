@@ -24,7 +24,7 @@ git clone [git_url] ~/.local/share/typst/packages/iacr
 
 ### Start a new paper
 
-Initialize a new paper using the template:
+Initialize a new paper using the template. In bash run:
 
 ```bash
 typst init @iacr/typst:0.1.0 my-paper
@@ -47,7 +47,8 @@ my-paper/
 
 **1. Fill out `Define/define.typ`** with your paper metadata (title, authors, affiliations, etc.). 
 
---> See the comments in that file for accepted values and usage.
+> [!INFO] 
+> See the comments in that file for accepted values and usage.
 
 **3. Fill out your paper in `main.typ`:**
 
