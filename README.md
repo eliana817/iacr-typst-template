@@ -24,7 +24,7 @@ git clone [git_url] ~/.local/share/typst/packages/iacr
 
 ### Start a new paper
 
-Initialize a new paper using the template. In bash run:
+Initialize a new paper using the template:
 
 ```bash
 typst init @iacr/typst:0.1.0 my-paper
@@ -35,7 +35,7 @@ This will create the following structure in a new `my-paper` folder:
 ```
 my-paper/
 ├── Define/
-│   └── define.typ        ← The document's configuration data
+│   └── define.typ        ← Fill out your metadata here
 ├── Media/                ← Images and figures
 ├── References/
 │   └── references.bib    ← BibTeX bibliography
@@ -47,8 +47,7 @@ my-paper/
 
 **1. Fill out `Define/define.typ`** with your paper metadata (title, authors, affiliations, etc.). 
 
-> [!NOTE] 
-> See the comments in that file for accepted values and usage.
+--> See the comments in that file for accepted values and usage.
 
 **3. Fill out your paper in `main.typ`:**
 
@@ -104,19 +103,3 @@ The version can be set in `Define/define.typ` using the `version` variable:
 | `"preprint"` | Default. Shows license and date in footer. |
 | `"submission"` | Hides authors/affiliations for blind review. |
 | `"final"` | Shows full journal header, DOI, and publication dates. |
-
-## Roadmap
-
-- Font size for titles need to be readapted - DONE
-- Correct the color for the links - DONE (to be reviewed again)
-- Use sans-serif fonts for titles
-- Add a CONTRIBUTING.md
-- Add an example document / preview for the template (pdf and typst?)
-- Crossmark image for CiC journals - DONE (still need to understand how the URL is defined by user)
-- Add CI (check typst compile works fine etc.)
-- Add a default .bib file for references?
-
-### Unresolved questions
-
-- Is it normal that the CC logos are sometimes the "big" version (for CiC docs) and sometimes the "small" version. But they are the same in the end: https://github.com/creativecommons/cc-assets/blob/main/license_badges/big/by.svg
-- Why don't some pages start by 1? (should the typst template also include the fp and lp fields from LaTeX?)
