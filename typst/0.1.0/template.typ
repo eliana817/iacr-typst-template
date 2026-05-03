@@ -13,14 +13,14 @@
 
   authors: (),
   // e.g.: (
-  //   (name: "Alice Smith", inst: (1,), orcid: "0000-0000-0000-0000", email: "alice@example.com"),
-  //   (name: "Bob Jones",   inst: (1,2), email: "bob@example.com"),
+  //   (name: "Author A", inst: (1,), email: "author_a@example.com"),
+  //   (name: "Author B",   inst: (1,2), email: "author_b@example.com"),
   // )
   
   affiliations: (),
   // e.g.: (
-  //   (id: 1, name: "NXP Semiconductors", city: "Leuven", country: "Belgium"),
-  //   (id: 2, name: "Self", city: "San Jose", country: "USA"),
+  //   (id: 1, name: "Affiliation A", city: "City A", country: "Country A"),
+  //   (id: 2, name: "Affiliation B", city: "City B", country: "Country B"),
   // )
   
   abstract: [],
