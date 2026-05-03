@@ -47,7 +47,7 @@ my-paper/
 
 **1. Fill out `Define/define.typ`** with your paper metadata (title, authors, affiliations, etc.). 
 
-> [!INFO] 
+> [!NOTE] 
 > See the comments in that file for accepted values and usage.
 
 **3. Fill out your paper in `main.typ`:**
