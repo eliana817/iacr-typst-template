@@ -4,6 +4,126 @@
 // The CC license badge was taken from here:
 // https://github.com/creativecommons/cc-assets/blob/main/license_badges/small/by.svg
 
+#let iacr-front-page(
+  title: "",
+  subtitle: none,
+  authors: (),
+  affiliations: (),
+  abstract: [],
+  keywords: (),
+  anonymous: false,
+  anonymous_placeholder: "",
+  cite-color: blue,
+) = {
+  align(center)[
+    #v(1em)
+    #text(size: 17.28pt, weight: "bold")[#title]
+    #if subtitle != none {
+      v(0.3em)
+      text(size: 12pt, style: "italic")[#subtitle]
+    }
+    #v(1em)
+
+    // Hide authors and affiliations if submission version (anonymous)
+    
+    #if not anonymous {
+      let show-inst = authors.len() > 1 and affiliations.len() > 1
+      text(size: 10pt)[
+        #authors.map(a =>
+          if show-inst and "inst" in a and a.inst.len() > 0 {
+            [#a.name#super(a.inst.map(str).join(","))]
+          } else {
+            [#a.name]
+          }
+        ).join(", ")
+      ]
+      v(0.5em)
+      text(size: 9pt)[
+        
+        #affiliations.map(a => {
+          // Create list of emails that correspond to each affiliation
+          let affil-authors = authors.filter(au => 
+            "inst" in au and a.id in au.inst and "email" in au
+          )
+          
+          let affil-emails = affil-authors.map(au => au.email)
+
+          stack(
+            spacing: 5pt,
+            // Affiliation line
+            if show-inst {
+              [#super(str(a.id))#a.name, #a.city, #a.country]
+            } else {
+              [#a.name, #a.city, #a.country]
+            },
+            // Add mailto links when applicable
+            if affil-emails.len() > 0 {
+              if affil-emails.len() == 1 {
+                // If only one email, show it as is
+                link("mailto:" + affil-emails.first())[
+                  #text(fill: cite-color, size: 9pt)[#affil-emails.first()]
+                ]
+              } else {
+                // If multiple emails: group as {a, b, c}@domain.com if same domain
+                let domain = affil-emails.first().split("@").last()
+                let same-domain = affil-emails.all(e => e.ends-with("@" + domain))
+                
+                if same-domain {
+                  let usernames = affil-emails.map(e => e.split("@").first())
+                  link("mailto:" + affil-emails.join(","))[
+                    #text(fill: cite-color, size: 9pt)[
+                      \{#usernames.join(", ")\}\@#domain
+                    ]
+                  ]
+                } else {
+                  // Different domains: show individually
+                  stack(
+                    spacing: 1pt,
+                    ..affil-emails.map(e =>
+                      link("mailto:" + e)[
+                        #text(fill: cite-color, size: 9pt)[#e]
+                      ]
+                    )
+                  )
+                }
+              }
+            }
+          )
+        }).join([])
+
+      ]
+    } else {
+      // If version is submission: show anonymous placeholder
+      text(size: 10pt, style: "italic")[#anonymous_placeholder]
+    }
+  ]
+
+  v(2em)
+
+  // Abstract + keywords
+  align(center)[
+    #block(width: 85%, inset: (x: 0pt))[
+
+      #set text(size: 9pt)
+      #set align(left)
+
+      // Abstract
+      #text(weight: "bold")[Abstract.] 
+      #abstract
+
+      #v(.5em)
+
+      // Keywords
+      #block[
+        #if keywords.len() > 0 {
+          text(weight: "bold")[Keywords: ] 
+          keywords.join(" · ")
+        }
+      ]
+    ]
+  ]
+}
+
 #let iacr-template(
 
   journal: "tosc", // cic, tosc, tches
@@ -256,116 +376,19 @@
     description: pub_name + if doi != none { ", DOI: " + doi } else { "" },
   )
 
-  // Front page content formatting. Document metadata.
+  // Front page content formatting. 
 
-  // Title + Authors + Affiliations
-  align(center)[
-    #v(1em)
-    #text(size: 17.28pt, weight: "bold")[#title]
-    #if subtitle != none {
-      v(0.3em)
-      text(size: 12pt, style: "italic")[#subtitle]
-    }
-    #v(1em)
-
-    // Hide authors and affiliations if submission version (anonymous)
-    
-    #if not anonymous {
-      let show-inst = authors.len() > 1 and affiliations.len() > 1
-      text(size: 10pt)[
-        #authors.map(a =>
-          if show-inst and "inst" in a and a.inst.len() > 0 {
-            [#a.name#super(a.inst.map(str).join(","))]
-          } else {
-            [#a.name]
-          }
-        ).join(", ")
-      ]
-      v(0.5em)
-      text(size: 9pt)[
-        
-        #affiliations.map(a => {
-          // Create list of emails that correspond to each affiliation
-          let affil-authors = authors.filter(au => 
-            "inst" in au and a.id in au.inst and "email" in au
-          )
-          
-          let affil-emails = affil-authors.map(au => au.email)
-
-          stack(
-            spacing: 5pt,
-            // Affiliation line
-            if show-inst {
-              [#super(str(a.id))#a.name, #a.city, #a.country]
-            } else {
-              [#a.name, #a.city, #a.country]
-            },
-            // Add mailto links when applicable
-            if affil-emails.len() > 0 {
-              if affil-emails.len() == 1 {
-                // If only one email, show it as is
-                link("mailto:" + affil-emails.first())[
-                  #text(fill: cite-color, size: 9pt)[#affil-emails.first()]
-                ]
-              } else {
-                // If multiple emails: group as {a, b, c}@domain.com if same domain
-                let domain = affil-emails.first().split("@").last()
-                let same-domain = affil-emails.all(e => e.ends-with("@" + domain))
-                
-                if same-domain {
-                  let usernames = affil-emails.map(e => e.split("@").first())
-                  link("mailto:" + affil-emails.join(","))[
-                    #text(fill: cite-color, size: 9pt)[
-                      \{#usernames.join(", ")\}\@#domain
-                    ]
-                  ]
-                } else {
-                  // Different domains: show individually
-                  stack(
-                    spacing: 1pt,
-                    ..affil-emails.map(e =>
-                      link("mailto:" + e)[
-                        #text(fill: cite-color, size: 9pt)[#e]
-                      ]
-                    )
-                  )
-                }
-              }
-            }
-          )
-        }).join([])
-
-      ]
-    } else {
-      // If version is submission: show anonymous placeholder
-      text(size: 10pt, style: "italic")[#anonymous_placeholder]
-    }
-  ]
-
-  v(2em)
-
-  // Abstract + keywords
-  align(center)[
-    #block(width: 85%, inset: (x: 0pt))[
-
-      #set text(size: 9pt)
-      #set align(left)
-
-      // Abstract
-      #text(weight: "bold")[Abstract.] 
-      #abstract
-
-      #v(.5em)
-
-      // Keywords
-      #block[
-        #if keywords.len() > 0 {
-          text(weight: "bold")[Keywords: ] 
-          keywords.join(" · ")
-        }
-      ]
-    ]
-  ]
+  iacr-front-page(
+    title: title,
+    subtitle: subtitle,
+    authors: authors,
+    affiliations: affiliations,
+    abstract: abstract,
+    keywords: keywords,
+    anonymous: anonymous,
+    anonymous_placeholder: anonymous_placeholder,
+    cite-color: cite-color,
+  )
 
   v(2em)
 
