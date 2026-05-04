@@ -104,3 +104,13 @@ The version can be set in `Define/define.typ` using the `version` variable:
 | `"preprint"` | Default. Shows license and date in footer. |
 | `"submission"` | Hides authors/affiliations for blind review. |
 | `"final"` | Shows full journal header, DOI, and publication dates. |
+
+## Roadmap
+
+- Font size for titles need to be readapted
+- Correct the color for the links
+- Use sans-serif fonts for titles
+- Add a "How to use" pdf guide
+- Add an example document / preview for the template (pdf and typst?)
+- Crossmark image for CiC journals
+- Add a default .bib file for references?
