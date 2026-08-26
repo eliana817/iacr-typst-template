@@ -224,32 +224,34 @@
   )
 
   show heading: it => {
-    set text(
-      weight: "bold",
-      size: 10pt,
-    )
+    if it.level >= 3 {
+      set text(size: 10pt)
+    }
     it
     v(.5em)
   }
 
-  show heading.where(level: 1): set text(size: 12pt)
+  show heading.where(level: 1): set text(size: 14.4pt, weight: "bold")
+  show heading.where(level: 2): set text(size: 12pt, weight: "bold")
+  show heading.where(level: 3): set text(weight: "bold")
 
   // Links
 
   // --- Should we overwrite the default colors of typst to match the latex colors?? Cause they are slightly different.
+  let xcolor-green = rgb("#00FF00")  // citecolor=black!70!green
   let latex-red = rgb("#ED1B23")
   let latex-black = rgb("#221E1F")
   let latex-blue = rgb("#2D2F92")
-  let latex-green = rgb("#00A64F")
 
-  let cite-color = color.mix((latex-black, 70%), (latex-green, 30%))
-  let link-color = color.mix((latex-black, 70%), (latex-red,  30%))
-  let url-color = if journal == "cic" { latex-blue } else { link-color }
+  let cite-color = color.mix((latex-black, 70%), (xcolor-green, 30%), space: "rgb") // latex xcolor RGB blend
+  let link-color = color.mix((latex-black, 70%), (latex-red,  30%), space: "rgb") // linkcolor=black!70!red
+
+  let hyperref-default-magenta = rgb("#FF00FF")
+  let url-color = if journal == "cic" { rgb("#0000FF") } else { hyperref-default-magenta }
 
   show ref: set text(fill: link-color)
   show cite: set text(fill: cite-color)
   show link: it => {
-    // For external links use url-color, for internal links use link-color
     if type(it.dest) == str {
       text(fill: url-color, it)
     } else {
