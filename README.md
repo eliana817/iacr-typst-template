@@ -107,8 +107,8 @@ The version can be set in `Define/define.typ` using the `version` variable:
 
 ## Roadmap
 
-- Font size for titles need to be readapted
-- Correct the color for the links
+- Font size for titles need to be readapted - DONE
+- Correct the color for the links - DONE (to be reviewed again)
 - Use sans-serif fonts for titles
 - Add a "How to use" pdf guide
 - Add an example document / preview for the template (pdf and typst?)
