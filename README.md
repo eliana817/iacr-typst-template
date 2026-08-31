@@ -35,7 +35,7 @@ This will create the following structure in a new `my-paper` folder:
 ```
 my-paper/
 ├── Define/
-│   └── define.typ        ← Fill out your metadata here
+│   └── define.typ        ← The document's configuration data
 ├── Media/                ← Images and figures
 ├── References/
 │   └── references.bib    ← BibTeX bibliography
@@ -110,7 +110,8 @@ The version can be set in `Define/define.typ` using the `version` variable:
 - Font size for titles need to be readapted - DONE
 - Correct the color for the links - DONE (to be reviewed again)
 - Use sans-serif fonts for titles
-- Add a "How to use" pdf guide
+- Add a CONTRIBUTING.md
 - Add an example document / preview for the template (pdf and typst?)
 - Crossmark image for CiC journals
 - Add a default .bib file for references?
+- Is it normal that the CC logos are sometimes the "big" version (for CiC docs) and sometimes the "small" version. But they are the same in the end: https://github.com/creativecommons/cc-assets/blob/main/license_badges/big/by.svg
