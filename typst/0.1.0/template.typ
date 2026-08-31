@@ -3,6 +3,9 @@
 // 
 // The CC license badge was taken from here:
 // https://github.com/creativecommons/cc-assets/blob/main/license_badges/small/by.svg
+// 
+// The crossmark image for CiC documents is from: 
+// https://crossmark.crossref.org/widget/v2.0/readme.html
 
 #let iacr-front-page(
   title: "",
@@ -243,8 +246,8 @@
   let latex-black = rgb("#221E1F")
   let latex-blue = rgb("#2D2F92")
 
-  let cite-color = color.mix((latex-black, 70%), (xcolor-green, 30%), space: "rgb") // latex xcolor RGB blend
-  let link-color = color.mix((latex-black, 70%), (latex-red,  30%), space: "rgb") // linkcolor=black!70!red
+  let cite-color = color.mix((latex-black, 70%), (xcolor-green, 30%), space: rgb) // latex xcolor RGB blend
+  let link-color = color.mix((latex-black, 70%), (latex-red,  30%), space: rgb) // linkcolor=black!70!red
 
   let hyperref-default-magenta = rgb("#FF00FF")
   let url-color = if journal == "cic" { rgb("#0000FF") } else { hyperref-default-magenta }
@@ -347,7 +350,9 @@
         grid(
           columns: (1fr, auto),
           [Licensed under #license_value],
-          image("Resources/by.svg", width: 4em), 
+          link("https://creativecommons.org/licenses/by/4.0/deed.en")[
+            #image("Resources/by.svg", width: 4em)
+          ], 
         )
 
         // Dates row — only shown if value is not none
