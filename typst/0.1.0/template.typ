@@ -155,6 +155,7 @@
   vol: none,
   no: none,
   doi: none,
+  crossmark_url: none,
   received: none, 
   revised: none,
   accepted: none,
@@ -162,7 +163,7 @@
 
   body
 ) = {
-
+  
   let license_value = link("http://creativecommons.org/licenses/by/4.0/")[Creative Commons License CC-BY 4.0]
 
   // Set variables based on journal 
@@ -287,8 +288,9 @@
             // CiC: name + EISSN + vol/no/pages on left, DOI on right
             grid(
               columns: (1fr, auto),
+              align: (top + left, bottom + right),
               stack(
-                spacing: 2pt,
+                spacing: 5pt,
                 [#pub_name],
                 [ISSN #eissn, Vol. ]
                 + if vol != none { [#vol] }
@@ -296,9 +298,16 @@
                 + [, #lp pages.]
               ),
               if doi != none {
-                align(right)[
-                  #link("https://doi.org/" + doi)[https://doi.org/#doi]
-                ]
+                stack(
+                  spacing: 2pt,
+                  link("https://doi.org/" + doi)[https://doi.org\/#doi],
+                  if crossmark_url != none {
+                    v(2pt)
+                    link(crossmark_url)[
+                      #image("Resources/crossmark.svg", height: 25%)
+                    ]
+                  }
+                )
               }
             )
           } else {
