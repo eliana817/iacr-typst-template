@@ -25,6 +25,7 @@
   vol: vol,
   no: no,
   doi: doi,
+  crossmark_url: crossmark_url,
   received: received, 
   revised: revised,
   accepted: accepted,
