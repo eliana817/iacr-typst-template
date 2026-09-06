@@ -111,11 +111,17 @@ Set to none if not yet assigned by the journal.
 #let no = "issue number"
 
 /*
-doi: Digital Object Identifier assigned by the journal.
+  doi: Digital Object Identifier assigned by the journal.
   Do not include the "https://doi.org/" prefix, just the identifier.
   e.g. "10.46586/tosc.v2024.i1.1-23"
 */
-#let doi = "doi"
+#let doi = none
+
+/* 
+  crossmark_url: URL to the CrossMark page for the paper.
+  Set to none if not yet assigned by the journal.
+*/
+#let crossmark_url = none
 
 // received: Date the paper was received by the journal.
 #let received = "received date"
