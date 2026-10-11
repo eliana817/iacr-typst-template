@@ -19,7 +19,7 @@
   cite-color: blue,
 ) = {
   align(center)[
-    #v(1em)
+    #v(2em)
     #text(size: 17.28pt, weight: "bold")[#title]
     #if subtitle != none {
       v(0.3em)
@@ -201,7 +201,7 @@
   set page(
     paper: "a4",
     margin: (
-      top: 12.5%,
+      top: 13.5%,
       right: 17.5%,
       bottom: 12.5%,
       left: 17.5%
@@ -250,7 +250,7 @@
   let cite-color = color.mix((latex-black, 70%), (xcolor-green, 30%), space: rgb) // latex xcolor RGB blend
   let link-color = color.mix((latex-black, 70%), (latex-red,  30%), space: rgb) // linkcolor=black!70!red
 
-  let hyperref-default-magenta = rgb("#FF00FF")
+  let hyperref-default-magenta = rgb("#FB3199")
   let url-color = if journal == "cic" { rgb("#0000FF") } else { hyperref-default-magenta }
 
   show ref: set text(fill: link-color)
