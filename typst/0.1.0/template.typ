@@ -23,7 +23,7 @@
 ) = {
   align(center)[
     #v(2em)
-    #text(font: "New Computer Modern Sans", size: 17.28pt, weight: "bold")[#title]
+    #text(font: "Arial", size: 17.28pt, weight: "bold")[#title]
     #if subtitle != none {
       v(0.3em)
       text(size: 12pt, style: "italic")[#subtitle]
@@ -242,7 +242,7 @@
 
   show heading: set text(
     weight: "bold",
-    font: if journal in ("tosc", "tches") { "New Computer Modern Sans" } else { "New Computer Modern" },
+    font: if journal in ("tosc", "tches") { "Arial" } else { "New Computer Modern" },
   )
 
   show heading.where(level: 1): set text(size: 14.4pt)
