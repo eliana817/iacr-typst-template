@@ -38,10 +38,11 @@ authors: A list of authors. Each author is a dictionary with the following field
   - inst  (required) : Tuple of affiliation IDs (must match ids in affiliations).
     --> Use (1,) for a single affiliation (trailing comma required).
   - email (optional) : Email address. Will appear as a mailto link under the corresponding affiliation on the front page.
+  - orcid (optional) : ORCID identifier. Will display an ORCID icon linking to the author's ORCID profile.
 */
 #let authors = (
   (name: "Author A", inst: (1,), email: "author_a@example.com"),
-  (name: "Author B", inst: (1, 2), email: "author_b@example.com"),
+  (name: "Author B", inst: (1, 2), email: "author_b@example.com", orcid: "0000-0002-1825-0097"),
 )
 
 //////////////////

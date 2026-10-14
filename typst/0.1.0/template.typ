@@ -6,6 +6,9 @@
 // 
 // The crossmark image for CiC documents is from: 
 // https://crossmark.crossref.org/widget/v2.0/readme.html
+// 
+// ORCID logo is from:
+// https://orcid.filecamp.com/s/o/n8FpP1ADWmZDCUP2
 
 #let iacr-front-page(
   title: "",
@@ -20,7 +23,7 @@
 ) = {
   align(center)[
     #v(2em)
-    #text(size: 17.28pt, weight: "bold")[#title]
+    #text(font: "New Computer Modern Sans", size: 17.28pt, weight: "bold")[#title]
     #if subtitle != none {
       v(0.3em)
       text(size: 12pt, style: "italic")[#subtitle]
@@ -32,13 +35,23 @@
     #if not anonymous {
       let show-inst = authors.len() > 1 and affiliations.len() > 1
       text(size: 10pt)[
-        #authors.map(a =>
+        #authors.map(a => {
+          let out = [#a.name]
+
+          // Institution superscript
           if show-inst and "inst" in a and a.inst.len() > 0 {
-            [#a.name#super(a.inst.map(str).join(","))]
-          } else {
-            [#a.name]
+            out += super(a.inst.map(str).join(","))
           }
-        ).join(", ")
+
+          // ORCID icon, only if the author has an orcid
+          if "orcid" in a and a.orcid != none {
+            out += h(0.2em) + link("https://orcid.org/" + a.orcid)[
+              #box(image("Resources/orcid.svg", width: 0.7em))
+            ]
+          }
+
+          out
+        }).join(", ")
       ]
       v(0.5em)
       text(size: 9pt)[
@@ -227,17 +240,18 @@
     numbering: "1.1",
   )
 
+  show heading: set text(
+    weight: "bold",
+    font: if journal in ("tosc", "tches") { "New Computer Modern Sans" } else { "New Computer Modern" },
+  )
+
+  show heading.where(level: 1): set text(size: 14.4pt)
+  show heading.where(level: 2): set text(size: 12pt)
+  
   show heading: it => {
-    if it.level >= 3 {
-      set text(size: 10pt)
-    }
     it
     v(.5em)
   }
-
-  show heading.where(level: 1): set text(size: 14.4pt, weight: "bold")
-  show heading.where(level: 2): set text(size: 12pt, weight: "bold")
-  show heading.where(level: 3): set text(weight: "bold")
 
   // Links
 
@@ -247,7 +261,9 @@
   let latex-black = rgb("#221E1F")
   let latex-blue = rgb("#2D2F92")
 
-  let cite-color = color.mix((latex-black, 70%), (xcolor-green, 30%), space: rgb) // latex xcolor RGB blend
+  let hyperref-default-magenta = rgb("#FB3199")
+  let url-color = if journal == "cic" { rgb("#0000FF") } else { hyperref-default-magenta }
+  let cite-color = if journal == "tches" {hyperref-default-magenta} else {color.mix((latex-black, 70%), (xcolor-green, 30%), space: rgb)} // latex xcolor RGB blend
   let link-color = color.mix((latex-black, 70%), (latex-red,  30%), space: rgb) // linkcolor=black!70!red
 
   let hyperref-default-magenta = rgb("#FB3199")
