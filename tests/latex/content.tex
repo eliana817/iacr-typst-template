@@ -1,0 +1,75 @@
+\documentclass{iacrj}
+
+\title[running  = {The iacrj document template}]{How to Use the IACR Journal Document Template}
+\subtitle{iacrj Typst Template Documentation (v0.1.0)}
+\license{CC-BY-4.0}
+
+\addauthor[
+        inst    = {1},
+        surname = {Grasser},
+    ]{Eliana Grasser}
+\addauthor[orcid   = {0000-0001-5003-8937},
+        inst    = {2,3},
+        email   = {gilles.vanassche@st.com},
+        surname = {Van Assche},
+    ]{Gilles Van Assche}
+
+\addaffiliation[ror     = 02km85a12,
+                street  = {Lambroekstraat 5},
+                city    = {Diegem},
+                postcode= {1830},
+                country = {Belgium}
+               ]{STMicroelectronics}
+
+\addaffiliation[ror     = 01c74sd89,
+                street  = {Avenue Célestin Coq},
+                city    = {Rousset},
+                postcode= {13790},
+                country = {France}
+               ]{STMicroelectronics}
+
+\addaffiliation[ror     = 01r9htc13,
+                street  = {Avenue Franklin Roosevelt 50},
+                city    = {Brussels},
+                postcode= {1050},
+                country = {Belgium}
+               ]{Université Libre de Bruxelles}
+
+\keywords[Template, Typst, IACR]{Template, Typst, IACR}
+\begin{document}
+\maketitle
+
+
+\begin{abstract}
+  This is documentation for the \texttt{iacrj} document template that can be used for the three IACR journals ToSC, TCHES, and CiC.
+  The \texttt{iacrj} document template is intended to be the equivalent for the LaTeX \texttt{iacrj} document class.
+\end{abstract}
+\begin{textabstract}
+  This is documentation for the iacrj document template that can be used for the three IACR journals ToSC, TCHES, and CiC.
+  The iacrj document template is intended to be the equivalent for the LaTeX iacrj document class.
+\end{textabstract}
+\section*{Introduction}
+
+This document is a guide to using the \texttt{iacrj} document template for three IACR journals:
+\begin{itemize}
+\item IACR Transactions on Symmetric Cryptology (ToSC),
+\item IACR Transactions on Cryptographic Hardware and Embedded Systems (TCHES),
+\item IACR Communications in Cryptology (CiC)
+\end{itemize}
+The \texttt{iacrj} template is intended to be the Typst equivalent for the \texttt{iacrj} document class in LaTeX.
+
+The class is still in development and feedback and comments are welcome.
+The latest version can be found at \href{https://github.com/eliana817/iacr-typst-template/}{\texttt{https://github.com/eliana817/iacr-typst-template/}}.
+There is also a \href{https://github.com/IACR/latex}{github repository} where you can open issues or to submit pull requests.
+
+\paragraph*{NOTES}
+\begin{itemize}
+\item The production system to which you submit your final version does not yet support Typst.
+\item The default fonts are provided by the template.
+      Please do not change this.
+\item Avoid using too many packages.
+\item Don't try to change the bibliography style, the page style, or the page numbering.
+\end{itemize}
+
+\bibliography{iacrj-doc}
+\end{document}
