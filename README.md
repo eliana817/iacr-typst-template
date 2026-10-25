@@ -115,5 +115,8 @@ The version can be set in `Define/define.typ` using the `version` variable:
 - Crossmark image for CiC journals - DONE (still need to understand how the URL is defined by user)
 - Add CI (check typst compile works fine etc.)
 - Add a default .bib file for references?
+
+### Unresolved questions
+
 - Is it normal that the CC logos are sometimes the "big" version (for CiC docs) and sometimes the "small" version. But they are the same in the end: https://github.com/creativecommons/cc-assets/blob/main/license_badges/big/by.svg
 - Why don't some pages start by 1? (should the typst template also include the fp and lp fields from LaTeX?)

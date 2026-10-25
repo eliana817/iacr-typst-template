@@ -53,7 +53,7 @@ authors: A list of authors. Each author is a dictionary with the following field
 affiliations: A list of affiliations. Each affiliation is a dictionary with:
   - id      (required) : Numeric identifier. Must match the inst values used in the authors list above.
   - name    (required) : Full name of the institution.
-  - city    (required) : City of the institution.
+  - city    (optional) : City of the institution.
   - country (required) : Country of the institution.
 */
 #let affiliations = (
