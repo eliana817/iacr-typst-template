@@ -180,7 +180,7 @@
   body
 ) = {
   
-  let license_value = link("http://creativecommons.org/licenses/by/4.0/")[Creative Commons License CC-BY 4.0]
+  let license_value = link("http://creativecommons.org/licenses/by/4.0/")[CC BY 4.0]
 
   // Set variables based on journal 
   
@@ -211,6 +211,9 @@
   } else { 
     title 
   }
+
+  // General definitions
+  let has(v) = v != none and v != ""
 
   // General formatting
 
@@ -377,25 +380,32 @@
         // Footer for final version
         grid(
           columns: (1fr, auto),
-          [Licensed under #license_value],
+          [This work is licensed under a "#license_value" license.],
           link("https://creativecommons.org/licenses/by/4.0/deed.en")[
             #image(if journal == "cic" {"Resources/by_big.svg"} else {"Resources/by_small.svg"}, width: 4em)
           ], 
         )
 
         // Dates row — only shown if value is not none
-        grid(
-          columns: (1fr, 1fr, 1fr, 1fr),
-          if received  != none [ Received: #received ],
-          if revised   != none [ Revised: #revised ],
-          if accepted  != none [ Accepted: #accepted ],
-          if published != none [ Published: #published ],
-        )
+        let dates = (
+          if has(received) [Received: #received],
+          if has(revised) [Revised: #revised],
+          if has(accepted) [Accepted: #accepted],
+          if has(published) and journal != "cic" [Final version: #published],
+        ).filter(d => d != none)
+
+        if dates.len() > 0 {
+          grid(
+            columns: (1fr,) * dates.len(),
+            align: left,
+            ..dates,
+          )
+        }
       } else {
         // Footer for preprint version
         grid(
           columns: (1fr, auto),
-          [Licensed under #license_value],
+          [This work is licensed under a "#license_value" license.],
           [Date of this document: #datetime.today().display()],
         )
       }
