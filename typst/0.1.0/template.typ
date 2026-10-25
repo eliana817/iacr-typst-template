@@ -23,17 +23,18 @@
 ) = {
   align(center)[
     #v(2em)
-    #text(font: "Arial", size: 17.28pt, weight: "bold")[#title]
+    #text(font: ("Latin Modern Sans", "Arial"), size: 17.28pt, weight: 700)[#title]
     #if subtitle != none {
       v(0.3em)
       text(size: 12pt, style: "italic")[#subtitle]
     }
-    #v(1em)
+    #v(-8pt)
 
     // Hide authors and affiliations if submission version (anonymous)
     
     #if not anonymous {
       let show-inst = authors.len() > 1 and affiliations.len() > 1
+      
       text(size: 10pt)[
         #authors.map(a => {
           let out = [#a.name]
@@ -45,15 +46,17 @@
 
           // ORCID icon, only if the author has an orcid
           if "orcid" in a and a.orcid != none {
-            out += h(0.2em) + link("https://orcid.org/" + a.orcid)[
+            out += link("https://orcid.org/" + a.orcid)[
               #box(image("Resources/orcid.svg", width: 0.7em))
+              #h(-2.5pt)
             ]
           }
-
+          
           out
-        }).join(", ")
+        }).join(", ", last: " and ")
       ]
-      v(0.5em)
+
+      v(10pt)
       text(size: 9pt)[
         
         #affiliations.map(a => {
@@ -63,14 +66,15 @@
           )
           
           let affil-emails = affil-authors.map(au => au.email)
+          let has_city = "city" in a and a.city != none and a.city != ""
 
           stack(
-            spacing: 5pt,
+            //spacing: 5pt,
             // Affiliation line
             if show-inst {
-              [#super(str(a.id))#a.name, #a.city, #a.country]
+              [#super(str(a.id))#a.name,#if has_city [#a.city, ] #a.country]
             } else {
-              [#a.name, #a.city, #a.country]
+              [#a.name, #if has_city [#a.city,] #a.country]
             },
             // Add mailto links when applicable
             if affil-emails.len() > 0 {
@@ -114,7 +118,7 @@
     }
   ]
 
-  v(2em)
+  v(30pt)
 
   // Abstract + keywords
   align(center)[
@@ -122,12 +126,11 @@
 
       #set text(size: 9pt)
       #set align(left)
+      #set par(hanging-indent: 0em, first-line-indent: 0em, spacing: 1em)
 
       // Abstract
-      #text(weight: "bold")[Abstract.] 
+      #text(weight: "bold")[Abstract. #h(4pt)] 
       #abstract
-
-      #v(.5em)
 
       // Keywords
       #block[
@@ -221,6 +224,8 @@
     )
   )
 
+  set footnote(numbering: "a")
+
   set text(font: "New Computer Modern", fill: black, size: 10pt)
   set par(
     justify: true,
@@ -242,7 +247,7 @@
 
   show heading: set text(
     weight: "bold",
-    font: if journal in ("tosc", "tches") { "Arial" } else { "New Computer Modern" },
+    font: if journal in ("tosc", "tches") { ("Latin Modern Sans", "Arial") } else { "New Computer Modern" },
   )
 
   show heading.where(level: 1): set text(size: 14.4pt)
@@ -256,18 +261,16 @@
   // Links
 
   // --- Should we overwrite the default colors of typst to match the latex colors?? Cause they are slightly different.
-  let xcolor-green = rgb("#00FF00")  // citecolor=black!70!green
-  let latex-red = rgb("#ED1B23")
-  let latex-black = rgb("#221E1F")
-  let latex-blue = rgb("#2D2F92")
+  let green = rgb("#004B00") 
+  let red = rgb("#ED1B23")
+  let black = rgb("#221E1F")
+  let blue = rgb("#0101FF")
 
-  let hyperref-default-magenta = rgb("#FB3199")
-  let url-color = if journal == "cic" { rgb("#0000FF") } else { hyperref-default-magenta }
-  let cite-color = if journal == "tches" {hyperref-default-magenta} else {color.mix((latex-black, 70%), (xcolor-green, 30%), space: rgb)} // latex xcolor RGB blend
-  let link-color = color.mix((latex-black, 70%), (latex-red,  30%), space: rgb) // linkcolor=black!70!red
-
-  let hyperref-default-magenta = rgb("#FB3199")
-  let url-color = if journal == "cic" { rgb("#0000FF") } else { hyperref-default-magenta }
+  let magenta = rgb("#FB3199")
+  let url-color = if journal == "cic" { blue } else { magenta }
+  let cite-color = if journal == "tches" { magenta } else { green } 
+  let link-color = color.mix((black, 70%), (red,  30%), space: rgb)
+  let url-color = if journal == "cic" { blue } else { magenta }
 
   show ref: set text(fill: link-color)
   show cite: set text(fill: cite-color)
@@ -320,7 +323,7 @@
                   if crossmark_url != none {
                     v(2pt)
                     link(crossmark_url)[
-                      #image("Resources/crossmark.svg", height: 25%)
+                      #image("Resources/crossmark.svg", height: 18.5%)
                     ]
                   }
                 )
