@@ -39,19 +39,26 @@
         #authors.map(a => {
           let out = [#a.name]
 
-          // Institution superscript
-          if show-inst and "inst" in a and a.inst.len() > 0 {
-            out += super(a.inst.map(str).join(","))
+          // Footnote mark first (a, b, c...)
+          let has-fn = "footnote" in a and a.footnote != none and a.footnote != ""
+          if has-fn {
+            out += footnote(a.footnote)
           }
 
-          // ORCID icon, only if the author has an orcid
+          // Institution superscript, with a leading comma after a footnote mark (as in LaTeX)
+          if show-inst and "inst" in a and a.inst.len() > 0 {
+            let insts = a.inst.map(str).join(",")
+            out += super(if has-fn { "," + insts } else { insts })
+          }
+
+          // ORCID icon
           if "orcid" in a and a.orcid != none {
             out += link("https://orcid.org/" + a.orcid)[
               #box(image("Resources/orcid.svg", width: 0.7em))
               #h(-2.5pt)
             ]
           }
-          
+
           out
         }).join(", ", last: " and ")
       ]
