@@ -2,7 +2,7 @@
 // https://github.com/IACR/latex/blob/main/iacrj/iacrj.cls
 // 
 // The CC license badge was taken from here:
-// https://github.com/creativecommons/cc-assets/blob/main/license_badges/small/by.svg
+// https://github.com/creativecommons/cc-assets/blob/main/license_badges
 // 
 // The crossmark image for CiC documents is from: 
 // https://crossmark.crossref.org/widget/v2.0/readme.html
@@ -379,7 +379,7 @@
           columns: (1fr, auto),
           [Licensed under #license_value],
           link("https://creativecommons.org/licenses/by/4.0/deed.en")[
-            #image("Resources/by.svg", width: 4em)
+            #image(if journal == "cic" {"Resources/by_big.svg"} else {"Resources/by_small.svg"}, width: 4em)
           ], 
         )
 
